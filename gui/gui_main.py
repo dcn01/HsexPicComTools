@@ -54,7 +54,7 @@ class mainUI(mainWindowsGUI):
         获取需要查找的封面图片
         :return:
         """
-        pic_name = QFileDialog.getOpenFileName(self, '选取源文件路径', os.getcwd(), '*.jpg;;*.png;;ALL Files(*)')
+        pic_name = QFileDialog.getOpenFileName(self, '选取源文件路径', os.getcwd(), '*.jpg;;*.png')
         self.origin_pic_file_path = pic_name[0]
         self.origin_pic_path_line.setText(self.origin_pic_file_path)
         self.print_logs("源图片路径：%s " % self.origin_pic_file_path)
