@@ -9,5 +9,6 @@ if __name__ == '__main__':
     main_window = mainUI()
     main_window.setMinimumSize(580, 430)
     main_window.setMaximumSize(580, 430)
+    main_window.setWindowIcon(main_window.icon)
     main_window.show()
     sys.exit(app.exec())

@@ -1,11 +1,11 @@
 import os
 import sys
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel,
                              QLineEdit, QCheckBox, QTextBrowser, QFileDialog, QMessageBox, QAction, QFormLayout)
-
+import src.images
 
 class mainWindowsGUI(QMainWindow):
 
@@ -20,6 +20,9 @@ class mainWindowsGUI(QMainWindow):
         """
         self.setObjectName("MainWindow")
         self.resize(580, 430)
+
+        self.icon = QtGui.QIcon()
+        self.icon.addPixmap(QtGui.QPixmap(":img/gui_logo.png"),QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.groupBox_9 = QtWidgets.QGroupBox(self.centralwidget)
