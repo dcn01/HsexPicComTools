@@ -1,3 +1,5 @@
+import time
+
 from businese.threading_execute import signalThreading
 from gui.hsexbusinses import *
 from gui.proxysetting import *
@@ -35,6 +37,7 @@ class mainUI(mainWindowsGUI):
         self.actionsocks5.triggered.connect(self.open_proxy_setting)
         self.sw.signal.connect(self.get_ip_port)  # 显示设置了代理的日志
         self.start_execute_button.clicked.connect(self.start_execute)
+        self.start_execute_button.clicked.connect(self.button_status)
         self.end_execute_button.clicked.connect(self.stop_execute)
         self.th.sin_out.connect(self.print_logs)  # 执行了第几页的日志
 
@@ -44,10 +47,6 @@ class mainUI(mainWindowsGUI):
         self.clear_log_button.clicked.connect(self.clear_log_print)
         self.actionabout.triggered.connect(self.about_msg)
         self.actionhelp.triggered.connect(self.help_msg)
-
-        # 调试代码
-        self.start_path_line.setText("1")
-        self.end_path_line.setText("2")
 
     def get_origin_pic_file_path(self):
         """
@@ -140,15 +139,18 @@ class mainUI(mainWindowsGUI):
         if self.log_path_flor is None or self.log_path_flor == '':
             self.print_logs("请设置日志存放文件夹")
         else:
+            ip_port = None
             if self.open_proxy_button.isChecked():
                 if self.proxy_ip_port is None or self.proxy_ip_port == '':
-                    self.print_logs("还未设置代理IP,如果没有可用的代理IP请选择不开启代理IP")
+                    self.print_logs("还未设置代理IP,请前往“设置”-“本地代理”完善信息")
                     return None
+                else:
+                    ip_port = self.proxy_ip_port
             if int(star_number) <= int(end_number):
                 self.th.start_execute_init()  # 线程启动
                 self.th.get_bussinese_param(start_page_num=star_number, end_page_num=int(end_number) + 1,
                                             origin_pic_path=self.origin_pic_file_path, log_path_flor=self.log_path_flor,
-                                            proxy_ip_port=self.proxy_ip_port)
+                                            proxy_ip_port=ip_port)
                 self.th.start()
                 self.print_logs("开始进行对比，从第 %s 页执行到第 %s 页" % (star_number, end_number))
             else:
@@ -171,3 +173,4 @@ if __name__ == '__main__':
     main_window.setMaximumSize(580, 430)
     main_window.show()
     sys.exit(app.exec())
+
