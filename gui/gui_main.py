@@ -1,6 +1,8 @@
 import time
 
-from businese.threading_execute import signalThreading
+from PyQt5.QtCore import QThread
+
+from businese.threading_execute import signalThreading, refreshButtonStatus
 from gui.hsexbusinses import *
 from gui.proxysetting import *
 
@@ -36,9 +38,9 @@ class mainUI(mainWindowsGUI):
         # 以下为执行爬虫的信号槽
         self.actionsocks5.triggered.connect(self.open_proxy_setting)
         self.sw.signal.connect(self.get_ip_port)  # 显示设置了代理的日志
-        self.start_execute_button.clicked.connect(self.start_execute)
-        self.start_execute_button.clicked.connect(self.button_status)
-        self.end_execute_button.clicked.connect(self.stop_execute)
+        self.start_execute_button.clicked.connect(self.execute_button_status)
+        self.th.sin_work_status.connect(self.execute_status)
+        # self.end_execute_button.clicked.connect(self.stop_execute)
         self.th.sin_out.connect(self.print_logs)  # 执行了第几页的日志
 
         # 以下为没有太大联动的信号槽
@@ -147,12 +149,13 @@ class mainUI(mainWindowsGUI):
                 else:
                     ip_port = self.proxy_ip_port
             if int(star_number) <= int(end_number):
-                self.th.start_execute_init()  # 线程启动
+                self.th.start_execute_init()  # 线程启动,工作状态设置为True
                 self.th.get_bussinese_param(start_page_num=star_number, end_page_num=int(end_number) + 1,
                                             origin_pic_path=self.origin_pic_file_path, log_path_flor=self.log_path_flor,
                                             proxy_ip_port=ip_port)
                 self.th.start()
                 self.print_logs("开始进行对比，从第 %s 页执行到第 %s 页" % (star_number, end_number))
+                self.start_execute_button.setText("结束执行")
             else:
                 self.print_logs("开始页大于结束页，请重新设置，要求开始页小于结束页")
 
@@ -163,6 +166,23 @@ class mainUI(mainWindowsGUI):
         """
         self.th.pause()
         self.print_logs("已发出停止指令，当前正在处理的请求完成后便会停止")
+        self.start_execute_button.setText("请等待程序结束")
+        self.start_execute_button.setEnabled(False)
+
+    def execute_button_status(self):
+        if self.th.working is True and self.start_execute_button.text() == '开始执行':
+            self.start_execute()
+        elif self.th.working is True and self.start_execute_button.text() == '结束执行':
+            self.stop_execute()
+        elif self.th.working is False and self.start_execute_button.text() == '开始执行':
+            self.start_execute()
+        else:
+            self.start_execute_button.setText("开始执行")
+
+    def execute_status(self, sin_work_status=True):
+        if sin_work_status is False:
+            self.start_execute_button.setText("开始执行")
+            self.start_execute_button.setEnabled(True)
 
 
 if __name__ == '__main__':

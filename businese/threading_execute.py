@@ -6,6 +6,7 @@ from businese.BusinessProcessing import executeElement
 
 class signalThreading(QThread):
     sin_out = pyqtSignal(str)
+    sin_work_status = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__()
@@ -15,8 +16,6 @@ class signalThreading(QThread):
         self.get = executeElement()
         self.cond = QWaitCondition()
         self.mutex = QMutex()
-
-
 
     def __del__(self):
         # 线程状态改为和线程终止
@@ -36,7 +35,6 @@ class signalThreading(QThread):
         :return:
         """
         self.working = True
-        self.is_First_time = False
         self.cond.wakeAll()
 
     def get_bussinese_param(self, start_page_num, end_page_num, origin_pic_path, log_path_flor, proxy_ip_port=None):
@@ -64,7 +62,10 @@ class signalThreading(QThread):
             self.mutex.lock()
 
             if self.working is False:
-                self.cond.wait(self.mutex)
+                # self.cond.wait(self.mutex)
+                self.sin_out.emit("线程已停止运行")
+                self.sin_work_status.emit(False)
+                self.mutex.unlock()
                 return None
 
             star_number = self.start_page_num
@@ -73,9 +74,12 @@ class signalThreading(QThread):
             for i in range(int(star_number), int(end_number)):
 
                 if self.working is False:
-                    self.cond.wait(self.mutex)
+                    # self.cond.wait(self.mutex)
+                    self.sin_out.emit("程序已结束运行 %s " % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                    self.sin_work_status.emit(False)
+                    self.mutex.unlock()
                     return None
-
+                self.sin_work_status.emit(True)
                 url = 'https://hsex.men/list-' + str(i) + '.htm'
                 self.get.goto_picture(url=url, origin_pic_path=self.origin_pic_path, log_path_flor=self.log_path, ip_port=self.ip_port)
                 recode_page = "第 %d 页的数据检查完了 %s" % (i, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
@@ -85,3 +89,11 @@ class signalThreading(QThread):
             self.pause()
         self.sin_out.emit("线程已停止运行(或已完成循环对比)")
 
+
+class refreshButtonStatus(QThread):
+    def __init__(self):
+        super().__init__()
+        self.main_business_th = signalThreading()
+
+    def get_working_srarus(self):
+        return self.main_business_th.working

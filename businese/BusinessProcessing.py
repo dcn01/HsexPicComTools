@@ -59,7 +59,7 @@ class executeElement(GetHsexElement):
                                     f.writelines(new_line + '\n')
                                 f.close()
                 else:
-                    new_line = "[请求异常]视频名："+ pic_name + " 上传者："+ author +" 视频封面url: " + pic_url
+                    new_line = "[请求异常]视频名：" + pic_name + " 上传者：" + author + " 视频封面url: " + pic_url
                     with open(log_path_flor, 'a+') as f:
                         f.writelines(new_line + '\n')
                     f.close()
@@ -68,7 +68,7 @@ class executeElement(GetHsexElement):
                 f.writelines(new_line + '\n')
             f.close()
         else:
-            new_line = "[请求异常]url: " + url + " 未能成功获取到页面信息"
+            new_line = "[请求异常]url: " + url + " 未能获取到页面信息"
             with open(log_path_flor, 'a+') as f:
                 f.writelines(new_line + '\n')
             f.close()
