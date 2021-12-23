@@ -131,6 +131,11 @@ class PictureHashCompare(object):
         for i in range(len(hash1)):
             if hash1[i] != hash2[i]:
                 num += 1
+        if num >= 100:
+            num = 0
+        else:
+            # num = (100-num)/100
+            num = 1 - num / 1024
         return num
 
     def contrast_hash(self, pic_url_1, pic_url_2, hash_type):

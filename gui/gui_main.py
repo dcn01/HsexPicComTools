@@ -1,10 +1,6 @@
-import time
-
-from PyQt5.QtCore import QThread
-
-from businese.threading_execute import signalThreading, refreshButtonStatus
-from gui.hsexbusinses import *
-from gui.proxysetting import *
+from businese.online_businese.threading_execute import signalThreading
+from gui.online_main import *
+from gui.proxysetting_main import *
 
 
 class settingWindows(proxySocksSetting):
@@ -38,19 +34,19 @@ class mainUI(mainWindowsGUI):
         # 以下为执行爬虫的信号槽
         self.actionsocks5.triggered.connect(self.open_proxy_setting)
         self.sw.signal.connect(self.get_ip_port)  # 显示设置了代理的日志
-        self.start_execute_button.clicked.connect(self.execute_button_status)
-        self.th.sin_work_status.connect(self.execute_status)
-        # self.end_execute_button.clicked.connect(self.stop_execute)
-        self.th.sin_out.connect(self.print_logs)  # 执行了第几页的日志
+        self.start_execute_button.clicked.connect(self.execute_button_status_online)
+        self.th.sin_work_status.connect(self.execute_status_online)
+        # self.end_execute_button.clicked.connect(self.stop_execute_online)
+        self.th.sin_out.connect(self.print_logs_online)  # 执行了第几页的日志
 
         # 以下为没有太大联动的信号槽
-        self.origin_pic_path_button.clicked.connect(self.get_origin_pic_file_path)
-        self.log_save_path_button.clicked.connect(self.set_log_save_path)
-        self.clear_log_button.clicked.connect(self.clear_log_print)
+        self.origin_pic_path_button.clicked.connect(self.get_origin_pic_file_path_online)
+        self.log_save_path_button.clicked.connect(self.set_log_save_path_online)
+        self.clear_log_button.clicked.connect(self.clear_log_print_online)
         self.actionabout.triggered.connect(self.about_msg)
         self.actionhelp.triggered.connect(self.help_msg)
 
-    def get_origin_pic_file_path(self):
+    def get_origin_pic_file_path_online(self):
         """
         获取需要查找的封面图片
         :return:
@@ -58,18 +54,18 @@ class mainUI(mainWindowsGUI):
         pic_name = QFileDialog.getOpenFileName(self, '选取源文件路径', os.getcwd(), '*.jpg;;*.png')
         self.origin_pic_file_path = pic_name[0]
         self.origin_pic_path_line.setText(self.origin_pic_file_path)
-        self.print_logs("源图片路径：%s " % self.origin_pic_file_path)
+        self.print_logs_online("源图片路径：%s " % self.origin_pic_file_path)
 
-    def set_log_save_path(self):
+    def set_log_save_path_online(self):
         """
         获取需要查找的封面图片
         :return:
         """
         self.log_path_flor = QFileDialog.getExistingDirectory(self, '设置日志路径存放地址', os.getcwd())
         self.log_save_path_line.setText(self.log_path_flor)
-        self.print_logs("已设置日志路径：%s " % self.log_path_flor)
+        self.print_logs_online("已设置日志路径：%s " % self.log_path_flor)
 
-    def print_logs(self, text):
+    def print_logs_online(self, text):
         """
         打印日志的方法
         :param text:
@@ -84,7 +80,7 @@ class mainUI(mainWindowsGUI):
         else:
             self.log_print_textbox.insertPlainText(text + '\n')
 
-    def clear_log_print(self):
+    def clear_log_print_online(self):
         """
         清空日志输出区域
         :return:
@@ -115,17 +111,17 @@ class mainUI(mainWindowsGUI):
     def get_ip_port(self, ip_port):
         self.proxy_ip_port = ip_port
         if self.proxy_ip_port is None or self.proxy_ip_port == '':
-            self.print_logs("未设置代理ip")
+            self.print_logs_online("未设置代理ip")
         else:
-            self.print_logs("已设置代理IP：%s" % self.proxy_ip_port)
+            self.print_logs_online("已设置代理IP：%s" % self.proxy_ip_port)
 
-    def start_execute(self):
+    def start_execute_online(self):
         """
         主方法，对比图片使用
         :return:
         """
         # 先清理一下日志界面
-        self.clear_log_print()
+        self.clear_log_print_online()
 
         page_list = self.get_line_edit_page()
 
@@ -133,53 +129,53 @@ class mainUI(mainWindowsGUI):
         end_number = page_list[1]
 
         if star_number is None or star_number == '':
-            self.print_logs("请输入开始页")
+            self.print_logs_online("请输入开始页")
         if end_number is None or end_number == '':
-            self.print_logs("请输入结束页")
+            self.print_logs_online("请输入结束页")
         if self.origin_pic_file_path is None or self.origin_pic_file_path == '':
-            self.print_logs("请选择源图片")
+            self.print_logs_online("请选择源图片")
         if self.log_path_flor is None or self.log_path_flor == '':
-            self.print_logs("请设置日志存放文件夹")
+            self.print_logs_online("请设置日志存放文件夹")
         else:
             ip_port = None
             if self.open_proxy_button.isChecked():
                 if self.proxy_ip_port is None or self.proxy_ip_port == '':
-                    self.print_logs("还未设置代理IP,请前往“设置”-“本地代理”完善信息")
+                    self.print_logs_online("还未设置代理IP,请前往“设置”-“本地代理”完善信息")
                     return None
                 else:
                     ip_port = self.proxy_ip_port
             if int(star_number) <= int(end_number):
                 self.th.start_execute_init()  # 线程启动,工作状态设置为True
-                self.th.get_bussinese_param(start_page_num=star_number, end_page_num=int(end_number) + 1,
-                                            origin_pic_path=self.origin_pic_file_path, log_path_flor=self.log_path_flor,
-                                            proxy_ip_port=ip_port)
+                self.th.get_businese_param(start_page_num=star_number, end_page_num=int(end_number) + 1,
+                                           origin_pic_path=self.origin_pic_file_path, log_path_flor=self.log_path_flor,
+                                           proxy_ip_port=ip_port)
                 self.th.start()
-                self.print_logs("开始进行对比，从第 %s 页执行到第 %s 页" % (star_number, end_number))
+                self.print_logs_online("开始进行对比，从第 %s 页执行到第 %s 页" % (star_number, end_number))
                 self.start_execute_button.setText("结束执行")
             else:
-                self.print_logs("开始页大于结束页，请重新设置，要求开始页小于结束页")
+                self.print_logs_online("开始页大于结束页，请重新设置，要求开始页小于结束页")
 
-    def stop_execute(self):
+    def stop_execute_online(self):
         """
         停止执行
         :return:
         """
         self.th.pause()
-        self.print_logs("已发出停止指令，当前正在处理的请求完成后便会停止")
+        self.print_logs_online("已发出停止指令，当前正在处理的请求完成后便会停止")
         self.start_execute_button.setText("请等待程序结束")
         self.start_execute_button.setEnabled(False)
 
-    def execute_button_status(self):
+    def execute_button_status_online(self):
         if self.th.working is True and self.start_execute_button.text() == '开始执行':
-            self.start_execute()
+            self.start_execute_online()
         elif self.th.working is True and self.start_execute_button.text() == '结束执行':
-            self.stop_execute()
+            self.stop_execute_online()
         elif self.th.working is False and self.start_execute_button.text() == '开始执行':
-            self.start_execute()
+            self.start_execute_online()
         else:
             self.start_execute_button.setText("开始执行")
 
-    def execute_status(self, sin_work_status=True):
+    def execute_status_online(self, sin_work_status=True):
         if sin_work_status is False:
             self.start_execute_button.setText("开始执行")
             self.start_execute_button.setEnabled(True)

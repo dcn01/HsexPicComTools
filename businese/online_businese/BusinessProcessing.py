@@ -53,7 +53,7 @@ class executeElement(GetHsexElement):
                             p_origin_hash = self.pic_cmp.perception_hash(origin_pic_path)
                             p_target_hash = self.pic_cmp.perception_hash(url_content)
                             p_hash = self.pic_cmp.cmp2hash(p_origin_hash, p_target_hash)
-                            if p_hash <= 50:
+                            if p_hash > 0.70:
                                 new_line = "[相似度高]视频名："+ pic_name +" 上传者："+ author +" 视频封面url: " + pic_url
                                 with open(log_path_flor, 'a+') as f:
                                     f.writelines(new_line + '\n')

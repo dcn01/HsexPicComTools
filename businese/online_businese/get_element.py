@@ -59,6 +59,13 @@ class GetHsexElement(GetPage):
         """
         return self.get_page_element(url=url)
 
+    def get_network_status(self, url, ip_port):
+        element = self.get_page_element(url=url, proxies=ip_port)
+        if element is None:
+            return False
+        else:
+            return True
+
     def download_picture(self, pic_url, pic_name):
         """
         下载图片

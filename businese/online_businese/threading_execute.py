@@ -1,7 +1,7 @@
 import time
 
 from PyQt5.QtCore import QThread, pyqtSignal, QWaitCondition, QMutex
-from businese.BusinessProcessing import executeElement
+from businese.online_businese.BusinessProcessing import executeElement
 
 
 class signalThreading(QThread):
@@ -20,7 +20,7 @@ class signalThreading(QThread):
     def __del__(self):
         # 线程状态改为和线程终止
         self.working = False
-        self.wait()
+        # self.wait()
 
     def pause(self):
         """
@@ -37,7 +37,7 @@ class signalThreading(QThread):
         self.working = True
         self.cond.wakeAll()
 
-    def get_bussinese_param(self, start_page_num, end_page_num, origin_pic_path, log_path_flor, proxy_ip_port=None):
+    def get_businese_param(self, start_page_num, end_page_num, origin_pic_path, log_path_flor, proxy_ip_port=None):
         """
         获取一些业务需要的参数
         :param start_page_num: 开始页
@@ -90,10 +90,10 @@ class signalThreading(QThread):
         self.sin_out.emit("线程已停止运行(或已完成循环对比)")
 
 
-class refreshButtonStatus(QThread):
+class getNetWorkStatus(QThread):
     def __init__(self):
         super().__init__()
-        self.main_business_th = signalThreading()
+        self.get = executeElement()
 
-    def get_working_srarus(self):
-        return self.main_business_th.working
+    def get_network_status(self, ip_port=None):
+        return self.get.get_network_status(url="https://hsex.men", ip_port=ip_port)

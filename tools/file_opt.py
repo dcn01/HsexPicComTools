@@ -55,3 +55,29 @@ class fileOpt(object):
                 shutil.move(old_file_path, new_folder_path)
             except OSError:
                 pass
+
+    def cope_file(self, old_file_path, new_folder_path):
+        """
+        复制文件到新的文件夹
+        :param new_folder_path:
+        :param old_file_path:
+        :return:
+        """
+        if os.path.exists(old_file_path) and os.path.exists(new_folder_path):
+            try:
+                shutil.copy(old_file_path, new_folder_path)
+            except OSError:
+                pass
+
+    def get_file_list(self, path):
+        """
+        获取目录下所有的文件路径
+        :param path: 目录
+        :return:
+        """
+        file_names = [os.path.join(path, name) for path, subdirs, files in os.walk(path) for name in files]
+        img_list=[]
+        for i in range(len(file_names)):
+            if file_names[i].endswith('jpg') or file_names[i].endswith('png') or file_names[i].endswith('JPG') or file_names[i].endswith('PNG'):
+               img_list.append(file_names[i])
+        return img_list
