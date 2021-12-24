@@ -30,6 +30,8 @@ class downLoadPage(Ui_pic_download_main):
         self.actionscoks5.triggered.connect(self.open_proxy_setting)
         self.execute_button.clicked.connect(self.execute_button_status)
         self.clear_log_button.clicked.connect(self.clear_log_print)
+        self.th.sin_work_status.connect(self.execute_status)
+        self.th.sin_out.connect(self.print_logs)
 
     def print_logs(self, text):
         self.log_textBrowser.insertPlainText(text + '\n')
@@ -488,6 +490,7 @@ class mainGUI(Ui_index_main):
         timer = QTimer(self)
         timer.timeout.connect(self.showtime_by_offline)
         timer.timeout.connect(self.showtime_by_online)
+        timer.timeout.connect(self.showtime_by_download_line)
         timer.start()
 
     def open_offline_page(self):
@@ -535,6 +538,11 @@ class mainGUI(Ui_index_main):
         datetime = QDateTime.currentDateTime()
         text = datetime.toString()
         self.off_line_page.label.setText(text)
+
+    def showtime_by_download_line(self):
+        datetime = QDateTime.currentDateTime()
+        text = datetime.toString()
+        self.download_page.time_label.setText(text)
 
 
 if __name__ == '__main__':
