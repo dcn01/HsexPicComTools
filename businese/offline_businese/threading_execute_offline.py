@@ -23,10 +23,10 @@ class signalThreading(QThread):
         self.pic_com = PictureHashCompare()
         self.file = fileOpt()
 
-    def __del__(self):
-        # 线程状态改为和线程终止
-        self.working = False
-        self.wait()
+    # def __del__(self):
+    #     # 线程状态改为和线程终止
+    #     self.working = False
+    #     self.wait()
 
     def pause(self):
         """

@@ -12,8 +12,6 @@ class executeElement(GetHsexElement):
         super().__init__()
         self.pic_cmp = PictureHashCompare()
         self.file = fileOpt()
-        # self.origin_pic_path = pathUtil().rootPath + '/file/origin/origin_pic.jpg'  # 代码模式使用
-        # self.origin_pic_path = pathUtil().resource_path(os.path.join('res', 'origin_pic.jpg'))
 
     def goto_picture(self, url, origin_pic_path, log_path_flor, ip_port=None):
         """
@@ -54,7 +52,7 @@ class executeElement(GetHsexElement):
                             p_target_hash = self.pic_cmp.perception_hash(url_content)
                             p_hash = self.pic_cmp.cmp2hash(p_origin_hash, p_target_hash)
                             if p_hash > 0.70:
-                                new_line = "[相似度高]视频名："+ pic_name +" 上传者："+ author +" 视频封面url: " + pic_url
+                                new_line = "[相似度高]视频名：" + pic_name + " 上传者：" + author + " 视频封面url: " + pic_url
                                 with open(log_path_flor, 'a+') as f:
                                     f.writelines(new_line + '\n')
                                 f.close()

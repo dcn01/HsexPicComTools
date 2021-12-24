@@ -38,5 +38,4 @@ class Ui_index_main(QtWidgets.QWidget):
         self.online_model_button.setText("线上模式")
         self.offline_model_button.setText("线下模式")
         self.pic_download_model_button.setText("资源下载")
-        self.pic_download_model_button.setEnabled(False)
 
