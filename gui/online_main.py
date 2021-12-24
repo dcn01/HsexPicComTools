@@ -160,5 +160,5 @@ class Ui_online_main(QtWidgets.QMainWindow):
         self.menu.setTitle("设置")
         self.menuproxy.setTitle("proxy")
         self.menu_2.setTitle("帮助")
-        self.actionsocks5.setText("socks5")
-        self.actionabout.setText("about")
+        self.actionsocks5.setText("本地IP代理设置")
+        self.actionabout.setText("关于")

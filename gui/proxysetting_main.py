@@ -71,10 +71,10 @@ class proxySocksSetting(QDialog):
         self.sumbit_button.setGeometry(QtCore.QRect(200, 90, 61, 31))
         self.sumbit_button.setObjectName("origin_path_button")
 
-        self.setWindowTitle("socks5代理设置")
+        self.setWindowTitle("本地代理设置")
         self.groupBox.setTitle("请输入参数")
         self.label1.setText("请输入IP和端口")
-        self.label_2.setText("示例：socks5h://127.0.0.1:7890")
+        self.label_2.setText("示例：127.0.0.1:7890")
         self.sumbit_button.setText("确 定")
 
 
