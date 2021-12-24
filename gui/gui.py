@@ -12,7 +12,7 @@ from gui.proxysetting_main import proxySocksSetting
 from businese.offline_businese.threading_execute_offline import signalThreading
 from businese.online_businese.threading_execute import signalThreading as signalThreadingByOnline, getNetWorkStatus
 from gui.downlaod_main import Ui_pic_download_main
-from businese.download_businese.threading_execute import getNetWorkStatus as net_download
+from businese.download_businese.threading_execute import getNetWorkStatus as net_download, signalThreading as down_th
 
 
 class downLoadPage(Ui_pic_download_main):
@@ -20,6 +20,7 @@ class downLoadPage(Ui_pic_download_main):
         super().__init__()
         self.proxy_ip_port = None
         self.net = net_download()
+        self.th = down_th()
         self.sw = settingWindows()  # 实例代理设置页
 
         self.save_pic_path_button.clicked.connect(self.set_pic_save_path)
@@ -27,9 +28,14 @@ class downLoadPage(Ui_pic_download_main):
         self.net.sin_work_status.connect(self.check_network)
         self.sw.signal.connect(self.get_ip_port)
         self.actionscoks5.triggered.connect(self.open_proxy_setting)
+        self.execute_button.clicked.connect(self.execute_button_status)
+        self.clear_log_button.clicked.connect(self.clear_log_print)
 
     def print_logs(self, text):
         self.log_textBrowser.insertPlainText(text + '\n')
+
+    def clear_log_print(self):
+        self.log_textBrowser.clear()
 
     def set_pic_save_path(self):
         """
@@ -75,6 +81,80 @@ class downLoadPage(Ui_pic_download_main):
             self.print_logs("未设置代理ip")
         else:
             self.print_logs("已设置代理IP：%s" % self.proxy_ip_port)
+
+    def get_line_edit_page(self):
+        """
+        获取开始页和结束页
+        :return:
+        """
+        page_list = []
+        start_page = self.start_page_num_line.text()
+        end_page = self.end_page_num_line.text()
+        page_list.append(start_page)
+        page_list.append(end_page)
+        return page_list
+
+    def start_execute(self):
+        """
+        主方法，对比图片使用
+        :return:
+        """
+        # 先清理一下日志界面
+        self.clear_log_print()
+
+        page_list = self.get_line_edit_page()
+
+        star_number = page_list[0]
+        end_number = page_list[1]
+
+        if len(star_number) == 0:
+            self.print_logs("请输入开始页")
+        elif len(end_number) == 0:
+            self.print_logs("请输入结束页")
+        elif len(self.save_pic_path_line.text()) == 0:
+            self.print_logs("请选择文件保存目录")
+        else:
+            ip_port = None
+            if self.open_proxy_radioButton.isChecked():
+                if self.proxy_ip_port is None or self.proxy_ip_port == '':
+                    self.print_logs("还未设置代理IP,请前往“设置”-“本地代理”完善信息")
+                    return None
+                else:
+                    ip_port = self.proxy_ip_port
+            if int(star_number) <= int(end_number):
+                self.th.start_execute_init()  # 线程启动,工作状态设置为True
+                self.th.get_businese_param(start_page_num=star_number, end_page_num=int(end_number) + 1,
+                                           log_path_flor=self.save_pic_path_line.text(), proxy_ip_port=ip_port)
+                self.th.start()
+                self.print_logs("开始进行对比，从第 %s 页执行到第 %s 页" % (star_number, end_number))
+                self.execute_button.setText("结束执行")
+            else:
+                self.print_logs("开始页大于结束页，请重新设置，要求开始页小于结束页")
+
+    def stop_execute(self):
+        """
+        停止执行
+        :return:
+        """
+        self.th.pause()
+        self.print_logs("已发出停止指令，当前正在处理的请求完成后便会停止")
+        self.execute_button.setText("请等待程序结束")
+        self.execute_button.setEnabled(False)
+
+    def execute_button_status(self):
+        if self.th.working is True and self.execute_button.text() == '开始执行':
+            self.start_execute()
+        elif self.th.working is True and self.execute_button.text() == '结束执行':
+            self.stop_execute()
+        elif self.th.working is False and self.execute_button.text() == '开始执行':
+            self.start_execute()
+        else:
+            self.execute_button.setText("开始执行")
+
+    def execute_status(self, sin_work_status=True):
+        if sin_work_status is False:
+            self.execute_button.setText("开始执行")
+            self.execute_button.setEnabled(True)
 
 
 class settingWindows(proxySocksSetting):

@@ -37,9 +37,8 @@ class fileOpt(object):
             if os.path.exists(file_path):
                 return True
             else:
-                print("%s 文件不存在或还未生成，请检查或稍后再操作" % file_path)
-                time.sleep(2)
-                raise
+                # print("%s 文件不存在或还未生成，请检查或稍后再操作" % file_path)
+                return False
         except:
             raise
 
