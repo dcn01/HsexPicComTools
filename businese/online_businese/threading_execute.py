@@ -91,9 +91,16 @@ class signalThreading(QThread):
 
 
 class getNetWorkStatus(QThread):
+    sin_work_status = pyqtSignal(bool)
+
     def __init__(self):
         super().__init__()
         self.get = executeElement()
+        self.ip_port = None
 
     def get_network_status(self, ip_port=None):
-        return self.get.get_network_status(url="https://hsex.men", ip_port=ip_port)
+        self.ip_port = ip_port
+
+    def run(self):
+        result = self.get.get_network_status(url="https://hsex.men", ip_port=self.ip_port)
+        self.sin_work_status.emit(result)

@@ -66,7 +66,8 @@ class onLinePage(Ui_online_main):
         self.log_path_button.clicked.connect(self.set_log_save_path_online)
         self.clear_log_button.clicked.connect(self.clear_log_print_online)
         self.actionabout.triggered.connect(self.about_msg)
-        self.network_check_button.clicked.connect(self.check_network)
+        self.network_check_button.clicked.connect(self.test_net)
+        self.net.sin_work_status.connect(self.check_network)
 
     # 以下为线上模式的方法
     def get_origin_pic_file_path_online(self):
@@ -196,22 +197,26 @@ class onLinePage(Ui_online_main):
             self.execute_button.setText("开始执行")
             self.execute_button.setEnabled(True)
 
-    def check_network(self):
-        self.network_check_button.setEnabled(False)
-        self.print_logs_online("%s 开始检查网络，请稍后......" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    def test_net(self):
         if self.open_proxy_radioButton.isChecked():
             if self.proxy_ip_port is None or self.proxy_ip_port == '':
                 self.print_logs_online("还未设置代理IP,请前往“设置”-“本地代理”完善信息")
+                self.network_check_button.setEnabled(True)
                 return None
             else:
                 ip_port = self.proxy_ip_port
-                result = self.net.get_network_status(ip_port)
-                if result is True:
-                    self.print_logs_online("%s 代理IP网络正常，成功访问目标网站！" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-                else:
-                    self.print_logs_online("%s 网络异常，请检查网络或更新代理IP设置！" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                self.net.get_network_status(ip_port=ip_port)
+        self.net.start()
+        self.network_check_button.setEnabled(False)
+        self.print_logs_online("%s 开始检查网络，请稍后......" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
+    def check_network(self, result):
+        if self.open_proxy_radioButton.isChecked():
+            if result is True:
+                self.print_logs_online("%s 代理IP网络正常，成功访问目标网站！" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+            else:
+                self.print_logs_online("%s 代理IP网络异常，请检查网络或更新代理IP设置！" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         else:
-            result = self.net.get_network_status()
             if result is True:
                 self.print_logs_online("%s 网络正常，成功访问目标网站！" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             else:

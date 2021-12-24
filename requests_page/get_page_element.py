@@ -29,12 +29,11 @@ class GetPage(QObject):
         :param proxies: 代理ip，请传入字典形式 {'http': 'http://199.1.1.1:1234'}
         :return: html格式化过的页面元素
         """
+        # self.p = {"https": "//127.0.0.1:7890", "http": "//127.0.0.1:7890"}
         if proxies is not None:
             if "：" in proxies:
                 proxies = proxies.replace("：", ":")
-            if "socks5h" not in proxies:
-                self.p = {"https": "socks5h://" + proxies,
-                           "http": "socks5h://" + proxies}
+            self.p = {"https://" + proxies, "http://" + proxies}
 
         self.re.close()  # 避免重试时有太多连接，开始时就先关闭一下
         sleep_time = random.randint(3, 5)
