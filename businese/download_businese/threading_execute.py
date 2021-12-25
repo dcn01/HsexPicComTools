@@ -79,7 +79,7 @@ class signalThreading(QThread):
                     return None
                 self.sin_work_status.emit(True)
                 url = 'https://hsex.men/list-' + str(i) + '.htm'
-                self.get.goto_picture(url=url, log_path_flor=self.log_path, ip_port=self.ip_port)
+                self.get.goto_picture(url=url, pic_path_save=self.log_path, ip_port=self.ip_port)
                 recode_page = "第 %d 页的数据检查完了 %s" % (i, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                 self.sin_out.emit(recode_page)
 
